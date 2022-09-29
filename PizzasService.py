@@ -25,6 +25,10 @@ class Ingredients(base):
     ingredient_name = Column(String(255))
     price = Column(Integer)
 
+class Order(base):
+    
+    __tablename__ = ''
+
 
 
 base.metadata.create_all(engine)
