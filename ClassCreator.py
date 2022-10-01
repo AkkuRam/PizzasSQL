@@ -3,7 +3,7 @@ from sqlalchemy import Column, String, Integer, Boolean, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 
-engine = create_engine("mysql://root:123@localhost:3306/pizza_service", echo = True)
+engine = create_engine("mysql://root:****l@localhost/pizzaSQL", echo = True)
 base = declarative_base()
 connection = engine.connect()
 
@@ -17,7 +17,7 @@ class Pizza(base):
     price = Column(Integer)
   
 
-    
+"""  
 class Ingredients(base):
 
     __tablename__ = 'ingredients'
@@ -50,5 +50,6 @@ class Address(base):
     city_name = Column(String(255))
     street_name = Column(String(255))
     zip_code = Column(String(255))
+"""
     
 base.metadata.create_all(engine)
