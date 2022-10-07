@@ -53,7 +53,7 @@ class Order(base):
 
     __tablename__ = 'orders'
 
-    order_id = Column(Integer, primary_key = True)
+    id = Column(Integer, primary_key = True)
     order_time = Column(TIMESTAMP)
     pizzas = relationship('Pizza', secondary = order_pizzas)
     customer_id = Column(Integer, ForeignKey('customers.id'))
@@ -61,10 +61,11 @@ class Order(base):
 class Customer(base):
 
     __tablename__ = 'customers'
-
-    name = Column(String(255))
-    address_id = Column(Integer, ForeignKey('address.id'))
-    address = relationship('Address')
+    id = Column(Integer, primary_key = True)
+    first_name = Column(String(255))
+    last_name = Column(String(255))
+    address = Column(String(255))
+    orders = relationship("Order")
 
     
-base.metadata.create_all(engine)
+#base.metadata.create_all(engine)
