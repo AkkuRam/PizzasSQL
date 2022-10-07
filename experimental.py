@@ -1,9 +1,8 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from ClassCreator import Pizza, Ingredient
+from ClassCreator import Pizza, Ingredient, engine
 
-engine = create_engine("mysql://root:123sql@localhost/PizzaSQL", echo = False)
 connection = engine.connect()
 
 Session = sessionmaker(bind=engine)

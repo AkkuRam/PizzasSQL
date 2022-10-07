@@ -2,14 +2,12 @@ from ClassCreator import Ingredient, Pizza
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-
-engine = create_engine("mysql://root:123sql@localhost/PizzaSQL", echo = True)
-connection = engine.connect()
+from ClassCreator import engine, connection
 
 Session = sessionmaker(bind=engine)
 session = Session()
 
-#create ingredients
+# create ingredients
 salami = Ingredient('Salami', 1)
 tuna = Ingredient('Tuna', 1)
 onion = Ingredient('Onion', 0.5)
@@ -23,5 +21,6 @@ pizzaMargherita = Pizza('Pizza Margherita')
 pizzaSalami.ingredients = [salami]
 pizzaTonno.ingredients = [tuna, onion]
 
-#session.add_all([salami, tuna, onion, olive, pizzaSalami, pizzaTonno, pizzaMargherita])
-#session.commit()
+session.add_all([salami, tuna, onion, olive, pizzaSalami, pizzaTonno, pizzaMargherita])
+session.commit()
+session.close()

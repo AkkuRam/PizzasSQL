@@ -7,7 +7,8 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import relationship
 
-engine = create_engine("mysql://root:123sql@localhost/pizzaSQL", echo = True)
+# engine = create_engine("mysql://root:123sql@localhost/pizzaSQL", echo = True)
+engine = create_engine("mysql://root:123@localhost/pizzaSQL")
 base = declarative_base()
 connection = engine.connect()
 
@@ -68,4 +69,4 @@ class Customer(base):
     orders = relationship("Order")
 
     
-#base.metadata.create_all(engine)
+base.metadata.create_all(engine)
