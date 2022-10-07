@@ -1,3 +1,4 @@
+from audioop import add
 from inspect import CO_ASYNC_GENERATOR
 from time import time
 from pymysql import Date
@@ -58,6 +59,9 @@ class Order(base):
     order_time = Column(TIMESTAMP)
     pizzas = relationship('Pizza', secondary = order_pizzas)
     customer_id = Column(Integer, ForeignKey('customers.id'))
+    
+    def __init__(self, customer_id):
+        self.customer_id = customer_id
 
 class Customer(base):
 
@@ -68,5 +72,10 @@ class Customer(base):
     address = Column(String(255))
     orders = relationship("Order")
 
+    def __init__(self, first_name, last_name, address):
+        self.first_name = first_name
+        self.last_name = last_name
+        self.address = address
+
     
-base.metadata.create_all(engine)
+# base.metadata.create_all(engine)

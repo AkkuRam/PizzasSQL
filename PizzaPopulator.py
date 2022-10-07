@@ -21,6 +21,6 @@ pizzaMargherita = Pizza('Pizza Margherita')
 pizzaSalami.ingredients = [salami]
 pizzaTonno.ingredients = [tuna, onion]
 
-session.add_all([salami, tuna, onion, olive, pizzaSalami, pizzaTonno, pizzaMargherita])
-session.commit()
+# session.add_all([salami, tuna, onion, olive, pizzaSalami, pizzaTonno, pizzaMargherita])
+# session.commit()
 session.close()
