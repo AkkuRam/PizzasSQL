@@ -35,29 +35,44 @@ class TerminalApp:
         print('How would you like to proceed?')
         choice = 999
         while choice < 1 or choice > 2:
-            print('1 - Make a new Order\n2 - View your current Order')
+            print('1 - Make a new Order')
             choice = int(input())
-        if(choice == 1):
+        if choice == 1:
             self.makeOrder()
-        
-            
-
-            
+         
     def makeOrder(self):
+        pizzaList = []
         self.printMenu()
         print("Please enter the number of pizzas you would like to order")
         pizzaN = int(input())
+        self.pizzaName = session.query(Customer).get(pizzaN)
         for i in range(pizzaN):
             print('Enter the number of the pizza you want to add to your Order')
             pizza = int(input())
-       
+            if(pizza == 1 or pizza == 2 or pizza == 3):
+                if pizza == 1:
+                    pizzaList.append('Salami')
+                elif pizza == 2:
+                    pizzaList.append('Tonno')
+                elif pizza == 3:
+                    pizzaList.append('Margherita')
+        print('1 - If you would like to view your order\n2 - To go to the checkout') 
+        number = int(input())
+        if number == 1:
+            for pizza in pizzaList:
+                print("Pizza ordered: " + pizza)
+        elif number == 2:
+           pass
+
+    def deliverySystem(self):
+        pass
 
     def printMenu(self):
         for pizza in self.pizzaMenu:
             print(f'{pizza.id}: {pizza.pizza_name}')
             print('Ingredients:')
             for ingredient in pizza.ingredients:
-                print(f'{ingredient.ingredient_name}')
+                print(f'{ingredient.ingredient_name} and Price: ${ingredient.price} ')
             print()
                 
 
