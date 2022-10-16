@@ -1,15 +1,14 @@
 from audioop import add
+import datetime
 from inspect import CO_ASYNC_GENERATOR
-from time import time
-from pymysql import Date
 from sqlalchemy import TIMESTAMP, create_engine
-from sqlalchemy import Column, String, Integer, Boolean, ForeignKey, Table
+from sqlalchemy import Column, String, Integer, Boolean, ForeignKey, Table, Float, DateTime
+import sqlalchemy
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 
-# engine = create_engine("mysql://root:123sql@localhost/pizzaSQL", echo = True)
-engine = create_engine("mysql://root:123@localhost/pizzaSQL")
+engine = create_engine("mysql://root:123sql@localhost/pizzaSQL")
 base = declarative_base()
 connection = engine.connect()
 
@@ -44,11 +43,13 @@ class Ingredient(base):
 
     id = Column(Integer, primary_key = True)
     ingredient_name = Column(String(255))
-    price = Column(Integer)
+    price = Column(Float)
+    vegetarian = Column(Boolean)
 
-    def __init__(self, ingredient_name, price):
+    def __init__(self, ingredient_name, price, vegetarian):
         self.ingredient_name = ingredient_name
         self.price = price
+        self.vegetarian = vegetarian
 
 
 class Order(base):
@@ -56,12 +57,16 @@ class Order(base):
     __tablename__ = 'orders'
 
     id = Column(Integer, primary_key = True)
-    order_time = Column(TIMESTAMP)
+    order_time = Column(DateTime, default = sqlalchemy.func.now())
+    price = Column(Float)
     pizzas = relationship('Pizza', secondary = order_pizzas)
     customer_id = Column(Integer, ForeignKey('customers.id'))
+    employee_id = Column(Integer, ForeignKey('employees.id'))
+    employee = relationship("Employee", backref=backref("order", uselist = False))
     
-    def __init__(self, customer_id):
+    def __init__(self, customer_id, employee):
         self.customer_id = customer_id
+        self.employee = employee
 
 class Customer(base):
 
@@ -69,13 +74,45 @@ class Customer(base):
     id = Column(Integer, primary_key = True)
     first_name = Column(String(255))
     last_name = Column(String(255))
-    address = Column(String(255))
+    address_id = Column(Integer, ForeignKey('addresses.id'))
+    address = relationship('Address')
+    discountCode = Column(String(255))
+    discountCodeUsed = Column(Boolean)
+    pizzaCounter = Column(Integer)
     orders = relationship("Order")
 
-    def __init__(self, first_name, last_name, address):
+    def __init__(self, first_name, last_name):
         self.first_name = first_name
         self.last_name = last_name
-        self.address = address
+        self.discountCode = None
+        self.discountCodeUsed = False
+        self.pizzaCounter = 0
+
+class Address(base):
+    __tablename__ = 'addresses'
+    id = Column(Integer, primary_key = True)
+    street = Column(String(255))
+    housenumber = Column(String(255))
+    zipcode = Column(String(255))
+    city = Column(String(255))
+
+    def __init__(self, street, housenumber, zipcode, city):
+        self.street = street
+        self.housenumber = housenumber
+        self.zipcode = zipcode
+        self.city = city
+
+class Employee(base):
+    __tablename__ = 'employees'
+    id = Column(Integer, primary_key = True)
+    first_name = Column(String(255))
+    last_name = Column(String(255))
+    zipcode = Column(String(255))
+
+    def __init__(self, first_name, last_name, zipcode):
+        self.first_name = first_name
+        self.last_name = last_name
+        self.zipcode = zipcode
 
     
 # base.metadata.create_all(engine)
