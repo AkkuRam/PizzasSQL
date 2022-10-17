@@ -91,7 +91,7 @@ class TerminalApp:
         self.printMenu()
         n = 0
         pizzaAmount = 0
-        print('How many different kinds of Pizza would you like to order?')
+        print('How many Pizzas would you like to order?')
         while n < 1:
             n = int(input())
         for i in range(n):
@@ -103,11 +103,11 @@ class TerminalApp:
             pizzaAmount = int(input())
             session.add(OrderPizzaAmount(order.id, pizzaN, pizzaAmount))
         
-        n = -1
+        m = -1
         print('How many different kinds of desert would you like to order?')
-        while n < 0:
-            n = int(input())
-        for i in range(n):
+        while m < 0:
+            m = int(input())
+        for i in range(m):
             desertN = 0
             print("Please enter the id of the desert you would like to order")
             while desertN < 1 or desertN > 2:
@@ -116,11 +116,11 @@ class TerminalApp:
             desertAmount = int(input())
             session.add(OrderDesertAmount(order.id, desertN, desertAmount))
 
-        n = -1
+        m = -1
         print('How many different kinds of drinks would you like to order?')
-        while n < 0:
-            n = int(input())
-        for i in range(n):
+        while m < 0:
+            m = int(input())
+        for i in range(m):
             drinkN = 0
             print("Please enter the id of the desert you would like to order")
             while drinkN < 1 or drinkN > 2:
@@ -133,9 +133,9 @@ class TerminalApp:
         # order.deserts = desertList
         # order.drinks = drinkList
         print(f'The Price of your order will be {self.orderPrice(order)}€')
-        self.currentCustomer.pizzaCounter += pizzaAmount
+        self.currentCustomer.pizzaCounter += n
         if self.currentCustomer.discountCode is None and self.currentCustomer.pizzaCounter > 10:
-            self.currentCustomer.discountCode = self.generateDiscountCode()
+            self.currentCustomer.discountCode = self.generateDiscountCode(10)
             print('Congratulations! You have ordered more than 10 Pizzas with us! To celebrate you have been gifted a Discount Code.')
             print(f'Your Discount Code: {self.currentCustomer.discountCode}')
         if(self.currentCustomer.discountCode is not None and self.currentCustomer.discountCodeUsed is False):
@@ -152,7 +152,7 @@ class TerminalApp:
                     discountCode = input()
                     if(discountCode == self.currentCustomer.discountCode):
                         validCode = True
-                        order.price *= 0.9
+                        order.price = self.orderPrice(order) * 0.9
                         self.currentCustomer.discountCodeUsed = True
                     else:
                         print('You have entered the wrong code. Try again!')

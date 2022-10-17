@@ -8,7 +8,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import relationship, backref
 
-engine = create_engine("mysql://root:123sql@localhost/pizzaSQL")
+engine = create_engine("mysql://root:123@localhost/pizzaSQL")
 base = declarative_base()
 connection = engine.connect()
 
@@ -193,4 +193,4 @@ class OrderDrinkAmount(base):
         self.drink_amount = drink_amount
 
     
-#base.metadata.create_all(engine)
+# base.metadata.create_all(engine)

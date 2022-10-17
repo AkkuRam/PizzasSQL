@@ -67,6 +67,6 @@ lisa = Employee('Lisa', 'Smith', '6228LC')
 tom = Employee('Tom', 'Mueller', '6228LC')
 ella = Employee('Ella', 'Van Gracht', '6228LD')
 
-#session.add_all([salami, tuna, onion, olive, ham, prawns, fish, champignon, peperoni, pineapple, anchovy, pizzaSalami, pizzaTonno, pizzaMargherita, pizzaHawaii, pizzaFunghi, pizzaDiavolo, pizzaFruttiDiMare, pizzaNapoletana, pizzaTaormina, pizzaArmageddon,tiramisu, panacotta, water, sparklingWater, cokeSmall, cokeLarge, spriteSmall, spriteLarge, tom, ella, marc, lisa])
-#session.commit()
+# session.add_all([salami, tuna, onion, olive, ham, prawns, fish, champignon, peperoni, pineapple, anchovy, pizzaSalami, pizzaTonno, pizzaMargherita, pizzaHawaii, pizzaFunghi, pizzaDiavolo, pizzaFruttiDiMare, pizzaNapoletana, pizzaTaormina, pizzaArmageddon,tiramisu, panacotta, water, sparklingWater, cokeSmall, cokeLarge, spriteSmall, spriteLarge, tom, ella, marc, lisa])
+# session.commit()
 session.close()
