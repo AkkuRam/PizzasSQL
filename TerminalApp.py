@@ -3,12 +3,14 @@ from datetime import timedelta, datetime
 from sqlalchemy import delete
 import random, string
 from tracemalloc import start
-from ClassCreator import Address, Customer, Employee, Pizza, Ingredient, Order
+from ClassCreator import Address, Customer, Employee, OrderDesertAmount, OrderDrinkAmount, OrderPizzaAmount, Pizza, Ingredient, Order, Desert, Drink
 from PizzaPopulator import session
 class TerminalApp:
     
     def __init__(self):
         self.pizzaMenu = session.query(Pizza).all()
+        self.desertMenu = session.query(Desert).all()
+        self.drinkMenu = session.query(Drink).all()
     
     def start(self):
         self.currentCustomer = None
@@ -66,7 +68,6 @@ class TerminalApp:
         
         address =  session.query(Address).filter(Address.street == street, Address.housenumber == housenumber, Address.zipcode == zipcode, Address.city == city).first()
         if address is None:
-            print('address not previously stored')
             address = Address(street, housenumber, zipcode, city)
         
 
@@ -74,35 +75,67 @@ class TerminalApp:
         self.currentCustomer.address = address
         session.add_all([self.currentCustomer, address])
         session.commit()
+        print(f'Your customer ID is {self.currentCustomer.id}. Please remember this number!')
 
 
     # Make a new Order and add it to the database
     def makeOrder(self):
         deliveryGuy = self.driversAvailable()
         if deliveryGuy is None:
-            print('There are currently no employees availabe to deliver to your are. Sorry!')
+            print('There are currently no employees availabe to deliver to your area. Sorry!')
             return
-        pizzaList = []
-        self.printMenu()
-        pizzaN = 0
-        print("Please enter the amount of pizzas you would like to order. Please order at least one pizza.")
-        while pizzaN < 1:
-            pizzaN = int(input())
-        for i in range(pizzaN):
-            pizzaId = -1
-            pizza = None
-            print('Enter the number of the pizza you want to add to your Order')
-            while pizza is None:
-                pizzaID = int(input())
-                pizza = self.getPizza(pizzaID)
-            pizzaList.append(pizza)
         order = Order(self.currentCustomer.id, deliveryGuy)
-        order.pizzas = pizzaList
-        order.price = self.orderPrice(order)
-        print(f'The Price of your order will be {order.price}€')
-        self.currentCustomer.pizzaCounter += len(pizzaList)
+        # pizzaList = []
+        # desertList = []
+        # drinkList = []
+        self.printMenu()
+        n = 0
+        pizzaAmount = 0
+        print('How many different kinds of Pizza would you like to order?')
+        while n < 1:
+            n = int(input())
+        for i in range(n):
+            pizzaN = 0
+            print("Please enter the id of the pizza you would like to order")
+            while pizzaN < 1 or pizzaN > 10:
+                pizzaN = int(input())
+            print('Please enter the amount you would like to order of this pizza: ')
+            pizzaAmount = int(input())
+            session.add(OrderPizzaAmount(order.id, pizzaN, pizzaAmount))
+        
+        n = -1
+        print('How many different kinds of desert would you like to order?')
+        while n < 0:
+            n = int(input())
+        for i in range(n):
+            desertN = 0
+            print("Please enter the id of the desert you would like to order")
+            while desertN < 1 or desertN > 2:
+                desertN = int(input())
+            print('Please enter the amount you would like to order of this desert: ')
+            desertAmount = int(input())
+            session.add(OrderDesertAmount(order.id, desertN, desertAmount))
+
+        n = -1
+        print('How many different kinds of drinks would you like to order?')
+        while n < 0:
+            n = int(input())
+        for i in range(n):
+            drinkN = 0
+            print("Please enter the id of the desert you would like to order")
+            while drinkN < 1 or drinkN > 2:
+                drinkN = int(input())
+            print('Please enter the amount you would like to order of this desert: ')
+            drinkAmount = int(input())
+            session.add(OrderDrinkAmount(order.id, drinkN, drinkAmount))
+
+        # order.pizzas = pizzaList
+        # order.deserts = desertList
+        # order.drinks = drinkList
+        print(f'The Price of your order will be {self.orderPrice(order)}€')
+        self.currentCustomer.pizzaCounter += pizzaAmount
         if self.currentCustomer.discountCode is None and self.currentCustomer.pizzaCounter > 10:
-            self.currentCustomer.discountCode = self.generateDiscountCode
+            self.currentCustomer.discountCode = self.generateDiscountCode()
             print('Congratulations! You have ordered more than 10 Pizzas with us! To celebrate you have been gifted a Discount Code.')
             print(f'Your Discount Code: {self.currentCustomer.discountCode}')
         if(self.currentCustomer.discountCode is not None and self.currentCustomer.discountCodeUsed is False):
@@ -140,17 +173,16 @@ class TerminalApp:
                 td = datetime.now() - driver.order.order_time
                 if td.seconds > 2400:
                     return driver
-        return None
 
 
     # Giving the customer options to view his order and cancel if it's still early enough
     def viewOrder(self):
-        orderId = -1
+        orderID = -1
         order = None
         while order is None:
             print('Please enter your order Id')
-            orderId = int(input())
-            order = self.getOrder(orderId)
+            orderID = int(input())
+            order = self.getOrder(orderID)
         self.printOrder(order)
         td = datetime.now() - order.order_time
         if td.seconds < 300:
@@ -160,26 +192,57 @@ class TerminalApp:
                 print('1 - Yes')
                 print('2 - No')
                 choice = int(input())
-            if choice == 2:
-                session.execute(delete(Order).where(Order.id == orderId))
+            if choice == 1:
+                session.delete(order)
+                session.commit()
 
 
-    def getOrder(self, orderId):
+    def getOrder(self, orderID):
         for order in self.currentCustomer.orders:
-            if order.id == orderId:
+            if order.id == orderID:
                 return order
         return None
 
 
     def printOrder(self, order):
-        print(f'You ordered {len(order.pizzas)} pizzas:')
-        for pizza in order.pizzas:
-            print(f'- {pizza.pizza_name} {self.pizzaPrice(pizza)}€')
-        print(f'Total price: {order.price}')
+        print('\n YOUR ORDER')
+        print('-------------------------------')
+        print(f'Your order id is {order.id}. Please remember this number!')
+        pizzaAmounts = session.query(OrderPizzaAmount).filter(OrderPizzaAmount.order_id == order.id).all()
+        pizzaN = 0
+        for pizzaAmount in pizzaAmounts:
+            pizzaN += pizzaAmount.pizza_amount
+        print(f'You ordered {pizzaN} pizzas:')
+        for pizzaAmount in pizzaAmounts:
+            pizza = self.getPizza(pizzaAmount.pizza_id)
+            print(f'- {pizzaAmount.pizza_amount}x {pizza.pizza_name} {self.pizzaPrice(pizza)*pizzaAmount.pizza_amount}€')
+        print()
+
+        desertAmounts = session.query(OrderDesertAmount).filter(OrderDesertAmount.order_id == order.id).all()
+        desertN = 0
+        for desertAmount in desertAmounts:
+            desertN += desertAmount.desert_amount
+        print(f'You ordered {desertN} deserts:')
+        for desertAmount in desertAmounts:
+            desert = self.getDesert(desertAmount.desert_id)
+            print(f'- {desertAmount.pizza_amount}x {desert.desert_name} {desert.desert_price * desertAmount.desert_amount}€')
+        print()
+
+        drinkAmounts = session.query(OrderDrinkAmount).filter(OrderDrinkAmount.order_id == order.id).all()
+        drinkN = 0
+        for drinkAmount in drinkAmounts:
+            drinkN += drinkAmount.drink_amount
+        print(f'You ordered {drinkN} drinks:')
+        for drinkAmount in drinkAmounts:
+            drink = self.getDrink(drinkAmount.drink_id)
+            print(f'- {drinkAmount.drink_amount}x {drink.drink_name} {drink.drink_price * drinkAmount.drink_amount}€')
+
+
+        print(f'\nTotal price: {self.orderPrice(order)}€')
         print(f'You ordered at: {order.order_time}')
         td = datetime.now() - order.order_time
         if td.seconds < 600:
-            print('Your pizza is currently being prepared and will be out for delivery shortly.')
+            print('Your order is currently being prepared and will be out for delivery shortly.')
             print(f'It will be out for delivery in approximately {10-int(td.seconds/60)} minutes and delivered at around {order.order_time+timedelta(minutes=40)}')
         if td.seconds > 600 and td.seconds < 2400:
             print(f'Your order is out for delivery. Arrival at approxiamtely {order.order_time+timedelta(minutes=40)}')
@@ -189,28 +252,49 @@ class TerminalApp:
 
 
     def printMenu(self):
+        print('PIZZAS')
+        print('-------------------------------------------------')
         for pizza in self.pizzaMenu:
-            print()
-            print(f'{pizza.id}: {pizza.pizza_name}')
+            print(f'\n{pizza.id}: {pizza.pizza_name}')
             print('Ingredients:')
             for ingredient in pizza.ingredients:
-                print(f'{ingredient.ingredient_name}')
+                print(f'- {ingredient.ingredient_name}')
             veggieStatus = 'vegetarian' if self.pizzaIsVeggie(pizza) else 'not vegetarian'
             print(f'The pizza is {veggieStatus}')
-            print(f'Pizza price: {self.pizzaPrice(pizza)}')
+            print(f'Pizza price: {self.pizzaPrice(pizza)}€')
+        print('\nDESERTS')
+        print('-------------------------------------------------')
+        for desert in self.desertMenu:
+            print(f'\n {desert.id}: {desert.desert_name}')
+            print(f'Desert price: {desert.desert_price}€')
+        print('\nDRINKS')
+        print('-------------------------------------------------')
+        for drink in self.drinkMenu:
+            print(f'\n{drink.id}: {drink.drink_name} {drink.drink_amount}l')
+            print(f'Drink price: {drink.drink_price}')
+        
+
 
 
     def getPizza(self, id):
         for pizza in self.pizzaMenu:
             if pizza.id == id:
                 return pizza
-        return None
+
+    def getDesert(self, id):
+        for desert in self.desertMenu:
+            if desert.id == id:
+                return desert
+
+    def getDrink(self, id):
+        for drink in self.drinkMenu:
+            if drink.id == id:
+                return drink
 
     def getOrder(self, orderId):
         for order in self.currentCustomer.orders:
             if order.id == orderId:
                 return order
-        return None
             
     def pizzaIsVeggie(self, pizza):
         for ingredient in pizza.ingredients:
@@ -226,8 +310,23 @@ class TerminalApp:
 
     def orderPrice(self, order):
         price = 0
-        for pizza in order.pizzas:
-            price += self.pizzaPrice(pizza)
+        pizzas = session.query(OrderPizzaAmount).filter(OrderPizzaAmount.order_id == order.id).all()
+        for pizza in pizzas:
+            price += self.pizzaPrice(self.getPizza(pizza.pizza_id)) * pizza.pizza_amount
+
+        deserts = session.query(OrderDesertAmount).filter(OrderDesertAmount.order_id == order.id).all()
+        for desert in deserts:
+            price += self.getDesert(desert.desert_id).desert_price * desert.desert_amount
+
+        drinks = session.query(OrderDrinkAmount).filter(OrderDrinkAmount.order_id == order.id).all()
+        for drink in drinks:
+            price += self.getDrink(drink.drink_id).drink_price * drink.drink_amount
+        # for pizza in order.pizzas:
+        #     price += self.pizzaPrice(pizza)
+        # for desert in order.deserts:
+        #     price += desert.desert_price
+        # for drink in order.drinks:
+        #     price += drink.drink_price
         return price
 
     def generateDiscountCode(self, length):
