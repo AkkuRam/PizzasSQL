@@ -8,7 +8,7 @@
 
 Below the two things to modify would be the password and schema used, which is shown in '*'
 
-engine = create_engine("mysql://root:\*\*\*@\localhost/\*\*\*\*\*\*\*\*")
+engine = create_engine("mysql://root:*\*\*@\localhost/\*\*\*\*\*\*\*\*")
 
 4. This is how it would look for our example:
 
