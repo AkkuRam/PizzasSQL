@@ -19,7 +19,7 @@
 
 1. As you can see in (ClassCreator.py), all the following tables are made and ready for execution
 
-2. At the bottom of the class in (ClassCreator.py), you will have the uncomment the following statement and execute it:
+2. At the bottom of the class in (ClassCreator.py), you will have to uncomment the following statement and execute it:
 
 `base.metadata.create_all(engine)`
 
@@ -31,7 +31,7 @@
 
 1. All the following data to be inserted is defined in the class (PizzaPopulator.py) for drinks, deserts, pizzas, ingredients and employees
 
-2. To insert this data into workbench, you must execute the following statement:
+2. To insert this data into workbench, you must uncomment the these statements found at the bottom of the class (PizzaPopulator.py) and execute them:
 
 `session.add_all([salami, tuna, onion, olive, ham, prawns, fish, champignon, peperoni, pineapple, anchovy, pizzaSalami, pizzaTonno, pizzaMargherita, pizzaHawaii, pizzaFunghi, pizzaDiavolo, pizzaFruttiDiMare, pizzaNapoletana, pizzaTaormina, pizzaArmageddon,tiramisu, panacotta, water, sparklingWater, cokeSmall, cokeLarge, spriteSmall, spriteLarge, tom, ella, marc, lisa])`  
 `session.commit()`
@@ -40,8 +40,8 @@
 
 4. Example:
 
-`SELECT * FROM Customers`  
-`SELECT * FROM Orders`
+`SELECT * FROM Pizzas`  
+`SELECT * FROM Employees`
 
 ---
 # Running the Pizza Service (TerminalApp.py)
