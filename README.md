@@ -33,14 +33,14 @@
 
 2. To insert this data into workbench, you must execute the following statement:
 
-`session.add_all([salami, tuna, onion, olive, ham, prawns, fish, champignon, peperoni, pineapple, anchovy, pizzaSalami, pizzaTonno, pizzaMargherita, pizzaHawaii, pizzaFunghi, pizzaDiavolo, pizzaFruttiDiMare, pizzaNapoletana, pizzaTaormina, pizzaArmageddon,tiramisu, panacotta, water, sparklingWater, cokeSmall, cokeLarge, spriteSmall, spriteLarge, tom, ella, marc, lisa])`\\
+`session.add_all([salami, tuna, onion, olive, ham, prawns, fish, champignon, peperoni, pineapple, anchovy, pizzaSalami, pizzaTonno, pizzaMargherita, pizzaHawaii, pizzaFunghi, pizzaDiavolo, pizzaFruttiDiMare, pizzaNapoletana, pizzaTaormina, pizzaArmageddon,tiramisu, panacotta, water, sparklingWater, cokeSmall, cokeLarge, spriteSmall, spriteLarge, tom, ella, marc, lisa])`  
 `session.commit()`
 
 3. Now, refresh your schema in workbench you should be able to view the contents of the database with some querying commands
 
 4. Example:
 
-`SELECT * FROM Customers`\\
+`SELECT * FROM Customers`  
 `SELECT * FROM Orders`
 
 ---
