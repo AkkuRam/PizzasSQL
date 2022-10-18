@@ -5,9 +5,11 @@
 
 3. For the following changes below mentioned with the engine, you will have to do this in the (ClassCreator.py)
 
-4. Below the two things to modify would be the password and schema used, which is shown in **'*'**
+4. Below the two things to modify would be the password which is shown in **'*'** 
 
-`engine = create_engine("mysql://root:***@localhost********"`
+5. As well as put in your database name after "@localhost/"
+
+`engine = create_engine("mysql://root:***@localhost/yourDatabase"`
 
 5. This is how it would look for our example:
 
@@ -31,7 +33,7 @@
 
 1. All the following data to be inserted is defined in the class (PizzaPopulator.py) for drinks, deserts, pizzas, ingredients and employees
 
-2. To insert this data into workbench, you must uncomment the these statements found at the bottom of the class (PizzaPopulator.py) and execute them:
+2. To insert this data into workbench, you must uncomment these statements found at the bottom of the class (PizzaPopulator.py) and execute them:
 
 `session.add_all([salami, tuna, onion, olive, ham, prawns, fish, champignon, peperoni, pineapple, anchovy, pizzaSalami, pizzaTonno, pizzaMargherita, pizzaHawaii, pizzaFunghi, pizzaDiavolo, pizzaFruttiDiMare, pizzaNapoletana, pizzaTaormina, pizzaArmageddon,tiramisu, panacotta, water, sparklingWater, cokeSmall, cokeLarge, spriteSmall, spriteLarge, tom, ella, marc, lisa])`  
 `session.commit()`
